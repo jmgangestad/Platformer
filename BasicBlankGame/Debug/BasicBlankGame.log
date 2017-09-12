@@ -1,0 +1,13 @@
+﻿  resource_manager.cpp
+  main.cpp
+  game.cpp
+c:\users\joseph\documents\visual studio 2015\projects\basicblankgame\basicblankgame\game.cpp(72): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\joseph\documents\visual studio 2015\projects\basicblankgame\basicblankgame\game.cpp(180): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  texture.cpp
+  sprite_renderer.cpp
+  shader.cpp
+  game_object.cpp
+  BasicBlankGame.vcxproj -> c:\users\joseph\documents\visual studio 2015\Projects\BasicBlankGame\Debug\BasicBlankGame.exe
+  BasicBlankGame.vcxproj -> c:\users\joseph\documents\visual studio 2015\Projects\BasicBlankGame\Debug\BasicBlankGame.pdb (Partial PDB)
