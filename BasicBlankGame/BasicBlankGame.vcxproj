@@ -73,7 +73,8 @@
     <LibraryPath>C:\openGL_project_files\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>C:\openGL_project_files\Libs;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\openGL_project_files\releaselibs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\openGL_project_files\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
