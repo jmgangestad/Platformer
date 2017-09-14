@@ -70,8 +70,8 @@ Game::~Game() {
 void Game::Init() {
 	/* ALWAYS LEAVE THESE*/
 	srand(time(NULL));
-	ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.frag", 0, "sprite");
-	ResourceManager::LoadShader("shaders/particle.vs", "shaders/particle.frag", 0, "particle");
+	ResourceManager::LoadShader("Data/Resources/shaders/sprite.vs", "Data/Resources/shaders/sprite.frag", 0, "sprite");
+	ResourceManager::LoadShader("Data/Resources/shaders/particle.vs", "Data/Resources/shaders/particle.frag", 0, "particle");
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
@@ -79,9 +79,9 @@ void Game::Init() {
 
 	/* TEXTURES GO HERE */
     //      example  LoadTexture("textures/image.jpg", USE_ALPHA, "name");
-	ResourceManager::LoadTexture("textures/background.jpg", GL_FALSE, "background");
-	ResourceManager::LoadTexture("textures/ship.png", GL_TRUE, "ship");
-	ResourceManager::LoadTexture("textures/block.png", GL_TRUE, "block");
+	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
+	ResourceManager::LoadTexture("Data/Resources/textures/ship.png", GL_TRUE, "ship");
+	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "block");
 	/* TEXTURES GO HERE */
 
 
@@ -102,7 +102,7 @@ void Game::Init() {
 	*/
 
 	
-	SoundEngine->play2D("audio/background.mp3", GL_TRUE);
+	SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
 }
 
 void Game::Update(GLfloat dt) {
@@ -167,7 +167,7 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		if (button[a] && !last_button_a)
 		{
 			// button pressed but not held
-			SoundEngine->play2D("audio/bleep.wav", GL_FALSE);
+			SoundEngine->play2D("Data/Resources/audio/bleep.wav", GL_FALSE);
 
 			last_button_a = true;
 		}

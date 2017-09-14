@@ -13,15 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\shaders">
-      <UniqueIdentifier>{91c31ddc-075b-4fdc-8776-043842efe1fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\textures">
-      <UniqueIdentifier>{b09dd55a-725c-4145-a1db-2ce083b02a01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\audio">
-      <UniqueIdentifier>{155a61e1-7466-4b70-b119-2804987de256}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -65,44 +56,5 @@
     <ClCompile Include="texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="audio\bleep.mp3">
-      <Filter>Resource Files\audio</Filter>
-    </Media>
-    <Media Include="audio\bleep.wav">
-      <Filter>Resource Files\audio</Filter>
-    </Media>
-    <Media Include="audio\background.mp3">
-      <Filter>Resource Files\audio</Filter>
-    </Media>
-    <Media Include="audio\plink.wav">
-      <Filter>Resource Files\audio</Filter>
-    </Media>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\block.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="textures\ship.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="textures\background.jpg">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\particle.frag">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="shaders\particle.vs">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="shaders\sprite.frag">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="shaders\sprite.vs">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>
