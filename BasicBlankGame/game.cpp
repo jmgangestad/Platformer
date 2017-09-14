@@ -70,8 +70,8 @@ Game::~Game() {
 void Game::Init() {
 	/* ALWAYS LEAVE THESE */
 	srand(time(NULL));
-	ResourceManager::LoadShader("Data/Resources/shaders/sprite.vs", "Data/Resources/shaders/sprite.frag", 0, "sprite");
-	ResourceManager::LoadShader("Data/Resources/shaders/particle.vs", "Data/Resources/shaders/particle.frag", 0, "particle");
+	ResourceManager::LoadShader("Data/shaders/sprite.vs", "Data/shaders/sprite.frag", 0, "sprite");
+	ResourceManager::LoadShader("Data/shaders/particle.vs", "Data/shaders/particle.frag", 0, "particle");
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
