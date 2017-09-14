@@ -1,5 +1,5 @@
 ﻿  game.cpp
 c:\users\joseph\documents\visual studio 2015\projects\basicblankgame\basicblankgame\game.cpp(72): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\joseph\documents\visual studio 2015\projects\basicblankgame\basicblankgame\game.cpp(180): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\joseph\documents\visual studio 2015\projects\basicblankgame\basicblankgame\game.cpp(166): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
   BasicBlankGame.vcxproj -> C:\Users\Joseph\Documents\Visual Studio 2015\Projects\BasicBlankGame\Debug\BasicBlankGame.exe
   BasicBlankGame.vcxproj -> C:\Users\Joseph\Documents\Visual Studio 2015\Projects\BasicBlankGame\Debug\BasicBlankGame.pdb (Partial PDB)

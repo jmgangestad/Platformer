@@ -137,6 +137,23 @@
     <ClCompile Include="sprite_renderer.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="Data\Resources\audio\background.mp3" />
+    <Media Include="Data\Resources\audio\bleep.mp3" />
+    <Media Include="Data\Resources\audio\bleep.wav" />
+    <Media Include="Data\Resources\audio\plink.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Resources\textures\background.jpg" />
+    <Image Include="Data\Resources\textures\block.png" />
+    <Image Include="Data\Resources\textures\ship.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Resources\shaders\particle.frag" />
+    <None Include="Data\Resources\shaders\particle.vs" />
+    <None Include="Data\Resources\shaders\sprite.frag" />
+    <None Include="Data\Resources\shaders\sprite.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

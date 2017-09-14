@@ -68,17 +68,17 @@ Game::~Game() {
 }
 
 void Game::Init() {
-	/* ALWAYS LEAVE THESE*/
+	/* ALWAYS LEAVE THESE */
 	srand(time(NULL));
 	ResourceManager::LoadShader("Data/Resources/shaders/sprite.vs", "Data/Resources/shaders/sprite.frag", 0, "sprite");
 	ResourceManager::LoadShader("Data/Resources/shaders/particle.vs", "Data/Resources/shaders/particle.frag", 0, "particle");
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
-	/* ALWAYS LEAVE THESE*/
+	/* ALWAYS LEAVE THESE */
 
 	/* TEXTURES GO HERE */
-    //      example  LoadTexture("textures/image.jpg", USE_ALPHA, "name");
+    //      example  LoadTexture("Data/Resources/textures/image.jpg", USE_ALPHA, "name");
 	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
 	ResourceManager::LoadTexture("Data/Resources/textures/ship.png", GL_TRUE, "ship");
 	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "block");
@@ -138,30 +138,16 @@ void Game::Render() {
 
 void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 	int count;
-	const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
-	const unsigned char *button = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
 
-	if (this->State == GAME_ACTIVE)
+
+	/* CONTROLLER INPUT BEGIN */
+	if (glfwJoystickPresent(GLFW_JOYSTICK_1))
 	{
-		GLfloat velocity = PLAYER_VELOCITY * dt;
-		
+		const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+		const unsigned char *button = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+
 		if (button[back]) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-		
-		if (this->Keys[GLFW_KEY_A] || button[Dleft]) {
-			Ship->Rotation -= 1.2f;
-		}
-		if (this->Keys[GLFW_KEY_D] || button[Dright]) {
-			Ship->Rotation += 1.2f;
-		}
-
-		if (this->Keys[GLFW_KEY_W] || button[Dup]) {
-			Ship->Velocity += glm::vec2(1.2*sin(Ship->Rotation*3.11415 / 180.0), -1.2*cos(Ship->Rotation*3.11415 / 180.0));
-		}
-
-		if (this->Keys[GLFW_KEY_S] || button[Ddown]) {
-			Ship->Velocity -= glm::vec2(1.2*sin(Ship->Rotation*3.11415 / 180.0), -1.2*cos(Ship->Rotation*3.11415 / 180.0));
 		}
 
 		if (button[a] && !last_button_a)
@@ -171,21 +157,52 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 
 			last_button_a = true;
 		}
-		else if(!button[a])
+		else if (!button[a])
 		{
 			last_button_a = false;
 		}
 
-		if (axes[left_joy_x] != 0 ) {
+		if (axes[left_joy_x] != 0) {
 			Ship->Rotation += 1.2 * axes[left_joy_x];
 		}
-			
-			
+		
 		if (axes[left_joy_y] != 0) {
-			Ship->Velocity += glm::vec2(1.2*axes[left_joy_y]*sin(Ship->Rotation*3.11415/180.0), -1.2*axes[left_joy_y]*cos(Ship->Rotation*3.11415 / 180.0));
+			Ship->Velocity += glm::vec2(1.2*axes[left_joy_y] * sin(glm::radians(Ship->Rotation)), -1.2*axes[left_joy_y] * cos(glm::radians(Ship->Rotation)));
 		}
 
+		if (button[Dleft]) {
+			Ship->Rotation -= 1.2f;
+		}
+		if (button[Dright]) {
+			Ship->Rotation += 1.2f;
+		}
+
+		if (button[Dup]) {
+			Ship->Velocity += glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+		}
+
+		if (button[Ddown]) {
+			Ship->Velocity -= glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+		}
 	}
+	/* CONTROLLER INPUT END */
+
+	/* KEYBOARD INPUT BEGIN */
+	if (this->Keys[GLFW_KEY_A]) {
+		Ship->Rotation -= 1.2f;
+	}
+	if (this->Keys[GLFW_KEY_D]) {
+		Ship->Rotation += 1.2f;
+	}
+
+	if (this->Keys[GLFW_KEY_W]) {
+		Ship->Velocity += glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+	}
+
+	if (this->Keys[GLFW_KEY_S]) {
+		Ship->Velocity -= glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+	}
+	/* KEYBOARD INPUT END */
 }
 
 
