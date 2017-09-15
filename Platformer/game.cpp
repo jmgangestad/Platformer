@@ -10,12 +10,14 @@
 #include <vector>
 
 using namespace irrklang;
+using namespace glm;
 
 SpriteRenderer *Renderer;
-GameObject *Ship;
+GameObject *Player;
+GameObject *Platform;
 
 
-//typedef std::tuple<GLboolean, Direction, glm::vec2> Collision;
+typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2> Collision;
 
 ISoundEngine *SoundEngine = createIrrKlangDevice();
 
@@ -41,13 +43,24 @@ Direction VectorDirection(glm::vec2 target) {
 }
 */
 
-/*
-GLboolean CheckCollision(GameObject &one, GameObject &two) {
+
+Collision CheckCollision(GameObject &one, GameObject &two) {
 	bool collisionX = one.Position.x + one.Size.x >= two.Position.x && two.Position.x + two.Size.x >= one.Position.x;
 	bool collisionY = one.Position.y + one.Size.y >= two.Position.y && two.Position.y + two.Size.y >= one.Position.y;
-	return collisionX && collisionY;
+
+	bool totalCollision = collisionX && collisionY;
+	
+	vec2 difference = vec2(0,0);
+
+	if (totalCollision)
+	{
+		difference.y = one.Position.y + one.Size.y - two.Position.y;
+	}
+
+
+	return std::make_tuple(totalCollision, collisionX, collisionY, difference);
 }
-*/
+
 
 enum {
 	a, b, x, y, lb, rb, back, start, lclick, rclick, Dup, Dright, Ddown, Dleft
@@ -64,7 +77,7 @@ Game::Game(GLuint width, GLuint height)
 
 Game::~Game() {
 	delete Renderer;
-	delete Ship;
+	delete Player;
 }
 
 void Game::Init() {
@@ -72,7 +85,7 @@ void Game::Init() {
 	srand(time(NULL));
 	ResourceManager::LoadShader("Data/shaders/sprite.vs", "Data/shaders/sprite.frag", 0, "sprite");
 	ResourceManager::LoadShader("Data/shaders/particle.vs", "Data/shaders/particle.frag", 0, "particle");
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
+	mat4 projection = ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 	/* ALWAYS LEAVE THESE */
@@ -80,22 +93,30 @@ void Game::Init() {
 	/* TEXTURES GO HERE */
     //      example  LoadTexture("Data/Resources/textures/image.jpg", USE_ALPHA, "name");
 	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
-	ResourceManager::LoadTexture("Data/Resources/textures/ship.png", GL_TRUE, "ship");
-	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "block");
+	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "player");
+	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "platform");
 	/* TEXTURES GO HERE */
 
 
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 	
 
-	glm::vec2 playerPos = glm::vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
-	Ship = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("ship"));
+	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
+	Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("player"));
+	Player->HasGravity = true;
+	Player->Gravity = 700.0f;
 	
+
+	vec2 platformSize = vec2(this->Width/2, 10);
+	vec2 platformPos = vec2(this->Width / 2 - platformSize.x / 2, 3*this->Height / 4 - platformSize.y/2);
+	Platform = new GameObject(platformPos, platformSize, ResourceManager::GetTexture("platform"));
+	Platform->HasGravity = false;
+	Platform->Gravity = 1.0f;
 
 	/* Many GameObjects example
 	for (int i = 0; i < num_asteroids; i++)
 	{
-		AsteroidObject obj(glm::vec2(rand() % this->Width, rand() % this->Height), 15 + rand() % 40, glm::vec2(-50.0f + rand() % 100, -50.0f + rand() % 100), ResourceManager::GetTexture("asteroid"));
+		AsteroidObject obj(vec2(rand() % this->Width, rand() % this->Height), 15 + rand() % 40, vec2(-50.0f + rand() % 100, -50.0f + rand() % 100), ResourceManager::GetTexture("asteroid"));
 		obj.AngularRate = -50.0f + rand() % 100;
 		this->Asteroids.push_back(obj);
 	}
@@ -107,8 +128,9 @@ void Game::Init() {
 
 void Game::Update(GLfloat dt) {
 
-	Ship->Move(dt, this->Width, this->Height);
-	
+	Player->Move(dt, this->Width, this->Height);
+	Platform->Move(dt, this->Width, this->Height);
+
 	/* Many GameObjects example
 	for (AsteroidObject &tile : this->Asteroids)
 	{
@@ -117,16 +139,16 @@ void Game::Update(GLfloat dt) {
 	*/
 	
 
-	//this->DoCollisions();
+	this->DoCollisions();
 }
 
 void Game::Render() {
 	if (this->State == GAME_ACTIVE) {
 
-		Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
+		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), vec2(this->Width, this->Height), 0.0f);
 		
-		Ship->Draw(*Renderer, this->Width, this->Height);
-
+		Player->Draw(*Renderer, this->Width, this->Height);
+		Platform->Draw(*Renderer, this->Width, this->Height);
 		/* Many GameObjects example
 		for (AsteroidObject &item : this->Asteroids)
 		{
@@ -153,6 +175,11 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		if (button[a] && !last_button_a)
 		{
 			// button pressed but not held
+
+			Player->Velocity.y -= 300.0f;
+
+
+
 			SoundEngine->play2D("Data/Resources/audio/bleep.wav", GL_FALSE);
 
 			last_button_a = true;
@@ -163,44 +190,44 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		}
 
 		if (axes[left_joy_x] != 0) {
-			Ship->Rotation += 1.2 * axes[left_joy_x];
+			Player->Position.x += 2.0f*axes[left_joy_x];
 		}
 		
 		if (axes[left_joy_y] != 0) {
-			Ship->Velocity += glm::vec2(1.2*axes[left_joy_y] * sin(glm::radians(Ship->Rotation)), -1.2*axes[left_joy_y] * cos(glm::radians(Ship->Rotation)));
+			
 		}
 
 		if (button[Dleft]) {
-			Ship->Rotation -= 1.2f;
+			Player->Rotation -= 1.2f;
 		}
 		if (button[Dright]) {
-			Ship->Rotation += 1.2f;
+			Player->Rotation += 1.2f;
 		}
 
 		if (button[Dup]) {
-			Ship->Velocity += glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+			
 		}
 
 		if (button[Ddown]) {
-			Ship->Velocity -= glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+			
 		}
 	}
 	/* CONTROLLER INPUT END */
 
 	/* KEYBOARD INPUT BEGIN */
 	if (this->Keys[GLFW_KEY_A]) {
-		Ship->Rotation -= 1.2f;
+		
 	}
 	if (this->Keys[GLFW_KEY_D]) {
-		Ship->Rotation += 1.2f;
+		
 	}
 
 	if (this->Keys[GLFW_KEY_W]) {
-		Ship->Velocity += glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+		
 	}
 
 	if (this->Keys[GLFW_KEY_S]) {
-		Ship->Velocity -= glm::vec2(1.2*sin(glm::radians(Ship->Rotation)), -1.2*cos(glm::radians(Ship->Rotation)));
+		
 	}
 	/* KEYBOARD INPUT END */
 }
@@ -208,4 +235,18 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 
 void Game::DoCollisions() {
 	// Collision checks go here
+
+	Collision collision = CheckCollision(*Player, *Platform);
+
+	if (std::get<0>(collision) && std::get<1>(collision))
+	{
+		Player->Velocity.x = 0.0f;
+	}
+
+	if (std::get<0>(collision) && std::get<2>(collision))
+	{
+		Player->Velocity.y = 0.0f;
+		Player->Position.y -= std::get<3>(collision).y;
+	}
+
 }

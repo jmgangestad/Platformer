@@ -1,6 +1,10 @@
 #include "Headers/game_object.h"
 
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 GameObject::GameObject()
 	:Position(0, 0), Size(1, 1), Velocity(0.0f), Rotation(0.0f), Sprite(), IsSolid(false), Destroyed(false), AngularRate(0.0f) {}
 
@@ -33,8 +37,14 @@ void GameObject::Draw(SpriteRenderer &renderer, GLuint window_width, GLuint wind
 
 glm::vec2 GameObject::Move(GLfloat dt, GLuint window_width, GLuint window_height)
 {
+	if (this->HasGravity)
+	{
+		this->Velocity.y += this->Gravity * dt;
+		std::cout << dt << std::endl;
+	}
 	this->Position += this->Velocity * dt;
 	this->Rotation += this->AngularRate * dt;
+
 
 	/* USE THESE IF YOU WANT TO CONTINUE FROM ONE SIDE OF SCREEN TO THE OTHER*/
 	if (this->Position.x < 0.0f)

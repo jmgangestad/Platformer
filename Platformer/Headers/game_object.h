@@ -16,6 +16,8 @@ public:
 	GLfloat AngularRate;
 	GLboolean IsSolid;
 	GLboolean Destroyed;
+	GLboolean HasGravity;
+	GLfloat Gravity;
 
 	Texture2D Sprite;
 
