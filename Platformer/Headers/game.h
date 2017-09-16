@@ -14,7 +14,7 @@ enum GameState {
 };
 
 enum Direction {
-	UP, RIGHT, DOWN, LEFT
+	UP, LEFT, DOWN, RIGHT
 };
 
 const glm::vec2 PLAYER_SIZE(30, 50);
@@ -29,7 +29,7 @@ public:
 	GLuint Width, Height;
 	GLint Level;
 	bool last_button_a = false;
-	int i_shot;
+	bool last_button_y = false;
 
 	Game(GLuint width, GLuint height);
 	~Game();

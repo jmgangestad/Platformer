@@ -11,17 +11,19 @@
 
 class GameObject {
 public:
-	glm::vec2 Position, Size, Velocity;
+	glm::vec2 Position, Size, Velocity, Center, HalfExtent;
 	GLfloat Rotation;
 	GLfloat AngularRate;
 	GLboolean IsSolid;
 	GLboolean Destroyed;
 	GLboolean HasGravity;
 	GLfloat Gravity;
+	GLboolean CanJump;
 
 	Texture2D Sprite;
 
 	glm::vec2 Move(GLfloat dt, GLuint window_width, GLuint window_height);
+	void UpdateCenter();
 
 	GameObject();
 	GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity = glm::vec2(0.0f, 0.0f));

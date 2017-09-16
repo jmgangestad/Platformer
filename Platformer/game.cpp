@@ -9,6 +9,13 @@
 #include <irrklang/irrKlang.h>
 #include <vector>
 
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+
+
 using namespace irrklang;
 using namespace glm;
 
@@ -150,27 +157,46 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 			last_button_a = false;
 		}
 
+		if (button[y] && !last_button_y)
+		{
+			// button pressed but not held
+
+			Player->HasGravity = !Player->HasGravity;
+			Player->Velocity = vec2(0.0f, 0.0f);
+
+			
+			SoundEngine->play2D("Data/Resources/audio/plink.wav", GL_FALSE);
+
+			last_button_y = true;
+		}
+		else if (!button[y])
+		{
+			last_button_y = false;
+		}
+
 		if (axes[left_joy_x] != 0) {
 			Player->Position.x += 2.0f*axes[left_joy_x];
 		}
 		
 		if (axes[left_joy_y] != 0) {
-			
+			//Player->Position.y -= 2.0f*axes[left_joy_y];
 		}
 
+		float dpadspeed = 1.5f;
+
 		if (button[Dleft]) {
-			Player->Rotation -= 1.2f;
+			Player->Position.x -= dpadspeed;
 		}
 		if (button[Dright]) {
-			Player->Rotation += 1.2f;
+			Player->Position.x += dpadspeed;
 		}
 
 		if (button[Dup]) {
-			
+			Player->Position.y -= dpadspeed;
 		}
 
 		if (button[Ddown]) {
-			
+			Player->Position.y += dpadspeed;
 		}
 	}
 	/* CONTROLLER INPUT END */
@@ -194,7 +220,7 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 }
 
 
-typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2> Collision;
+
 
 
 Direction VectorDirection(glm::vec2 target) {
@@ -220,6 +246,8 @@ Direction VectorDirection(glm::vec2 target) {
 
 
 
+typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2, Direction> Collision;
+
 Collision CheckCollision(GameObject &character, GameObject &two) {
 	Direction direction;
 	vec2 offset = vec2(0,0);
@@ -229,29 +257,26 @@ Collision CheckCollision(GameObject &character, GameObject &two) {
 
 	bool totalCollision = collisionX && collisionY;
 	
-	vec2 center(character.Position.x + character.Size.x / 2.0f, character.Position.y + character.Size.y / 2.0f);
-	vec2 aabb_half_extents(two.Size.x / 2, two.Size.y / 2);
-	vec2 aabb_center(two.Position.x + aabb_half_extents.x, two.Position.y + aabb_half_extents.y);
+	character.UpdateCenter();
+	two.UpdateCenter();
+	
+	
+	vec2 difference = character.Center - two.Center;
+	vec2 clamped = clamp(difference, -two.HalfExtent, two.HalfExtent);
 
-	vec2 difference = center - aabb_center;
-	vec2 clamped = clamp(difference, -aabb_half_extents, aabb_half_extents);
+	vec2 closest = two.Center + clamped;
 
-	vec2 closest = aabb_center + clamped;
-
-	difference = closest - center;
+	difference = closest - character.Center;
 
 	direction = VectorDirection(difference);
+	
+	offset = character.HalfExtent - difference;
+
+	std::cout << character.HalfExtent.x - difference.x << std::endl;
+	
 
 
-
-	/*
-	if (totalCollision)
-	{
-		difference.y = character.Position.y + character.Size.y - two.Position.y;
-	}
-	*/
-
-	return std::make_tuple(totalCollision, collisionX, collisionY, difference);
+	return std::make_tuple(totalCollision, collisionX, collisionY, difference, direction);
 }
 
 
@@ -261,16 +286,37 @@ void Game::DoCollisions() {
 
 	Collision collision = CheckCollision(*Player, *Platform);
 
-	if (std::get<0>(collision) && std::get<1>(collision))
-	{
-		Player->Velocity.x = 0.0f;
-		Player->Position.x -= std::get<3>(collision).x;
-	}
+	GLboolean totalCollision = std::get<0>(collision);
+	GLboolean collisionX = std::get<1>(collision);
+	GLboolean collisionY = std::get<2>(collision);
+	vec2 difference = std::get<3>(collision);
+	Direction direction = std::get<4>(collision);
 
-	if (std::get<0>(collision) && std::get<2>(collision))
-	{
-		Player->Velocity.y = 0.0f;
-		Player->Position.y -= std::get<3>(collision).y;
+
+
+	if (totalCollision) {
+		switch (direction) {
+		case LEFT:
+			Player->Velocity.x = 0.0f;
+			Player->Position.x -= Player->HalfExtent.x - difference.x;
+			break;
+		case RIGHT:
+			Player->Velocity.x = 0.0f;
+			Player->Position.x += Player->HalfExtent.x + difference.x;
+			break;
+		case UP:
+			Player->Velocity.y = 0.0f;
+			Player->Position.y -= Player->HalfExtent.y - difference.y;
+			break;
+		case DOWN:
+			Player->Velocity.y = 0.0f;
+			Player->Position.y += Player->HalfExtent.y + difference.y;
+			break;
+
+
+
+		}
 	}
+	
 
 }
