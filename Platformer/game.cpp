@@ -21,7 +21,7 @@ using namespace glm;
 
 SpriteRenderer *Renderer;
 GameObject *Player;
-
+PlatformSet *plats;
 
 
 
@@ -46,6 +46,7 @@ Game::Game(GLuint width, GLuint height)
 Game::~Game() {
 	delete Renderer;
 	delete Player;
+	delete plats;
 }
 
 void Game::Init() {
@@ -68,41 +69,22 @@ void Game::Init() {
 
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 	
-
 	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
 	Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("player"));
 	Player->HasGravity = true;
 	Player->Gravity = 700.0f;
-	
 
 
-	//GameObject::GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity)
-
+	/* How to originally add a platform
 	vec2 platformSize = vec2(this->Width / 2, 10);
 	vec2 platformPos = vec2(this->Width / 2 - platformSize.x / 2, 3 * this->Height / 4 - platformSize.y / 2);
 	GameObject obj(platformPos, platformSize, ResourceManager::GetTexture("platform"));
 	this->Platforms.push_back(obj);
-
-	platformSize = vec2(this->Width / 4, 15);
-	platformPos = vec2(500, 365);
-	GameObject obj2(platformPos, platformSize, ResourceManager::GetTexture("platform"));
-	this->Platforms.push_back(obj2);
-
-	platformSize = vec2(this->Width / 4, 15);
-	platformPos = vec2(200, 300);
-	GameObject obj3(platformPos, platformSize, ResourceManager::GetTexture("platform"));
-	this->Platforms.push_back(obj3);
-		
-
-
-	/* Many GameObjects example
-	for (int i = 0; i < num_asteroids; i++)
-	{
-		AsteroidObject obj(vec2(rand() % this->Width, rand() % this->Height), 15 + rand() % 40, vec2(-50.0f + rand() % 100, -50.0f + rand() % 100), ResourceManager::GetTexture("asteroid"));
-		obj.AngularRate = -50.0f + rand() % 100;
-		this->Asteroids.push_back(obj);
-	}
 	*/
+
+	plats = new PlatformSet();
+
+	plats->Load("Data/levels/one.lvl");
 
 	
 	// SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
@@ -111,14 +93,6 @@ void Game::Init() {
 void Game::Update(GLfloat dt) {
 
 	Player->Move(dt, this->Width, this->Height);
-	
-	
-	for (GameObject &obj : this->Platforms)
-	{
-		obj.Move(dt, this->Width, this->Height);
-	}
-	
-	
 
 	this->DoCollisions();
 }
@@ -130,12 +104,11 @@ void Game::Render() {
 		
 		Player->Draw(*Renderer, this->Width, this->Height);
 		
-		
-		for (GameObject &obj : this->Platforms)
-		{
-			obj.Draw(*Renderer, this->Width, this->Height);
-		}
-		
+	
+		plats->Draw(*Renderer, this->Width, this->Height);
+
+
+
 	}
 }
 
@@ -236,110 +209,7 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 
 
 
-Direction VectorDirection(glm::vec2 target) {
-	glm::vec2 compass[] = {
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, -1.0f),
-		glm::vec2(-1.0f, 0.0f)
-	};
-
-	GLfloat max = 0.0f;
-	GLuint best_match = -1;
-	for (GLuint i = 0; i < 4; i++) {
-		GLfloat dot_product = glm::dot(glm::normalize(target), compass[i]);
-		if (dot_product > max) {
-			max = dot_product;
-			best_match = i;
-		}
-	}
-
-	return (Direction)best_match;
-}
-
-
-
-typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2, Direction> Collision;
-
-Collision CheckCollision(GameObject &character, GameObject &two) {
-	Direction direction;
-	vec2 offset = vec2(0,0);
-	
-	bool collisionX = character.Position.x + character.Size.x >= two.Position.x && two.Position.x + two.Size.x >= character.Position.x;
-	bool collisionY = character.Position.y + character.Size.y >= two.Position.y && two.Position.y + two.Size.y >= character.Position.y;
-
-	bool totalCollision = collisionX && collisionY;
-	
-	character.UpdateCenter();
-	two.UpdateCenter();
-	
-	
-	vec2 difference = character.Center - two.Center;
-	vec2 clamped = clamp(difference, -two.HalfExtent, two.HalfExtent);
-
-	vec2 closest = two.Center + clamped;
-
-	difference = closest - character.Center;
-
-	direction = VectorDirection(difference);
-	
-	offset = character.HalfExtent - difference;
-
-	std::cout << character.Position.x << "  " << character.Position.y << std::endl;
-	
-
-
-	return std::make_tuple(totalCollision, collisionX, collisionY, difference, direction);
-}
-
-
-
 void Game::DoCollisions() {
 	// Collision checks go here
-	Collision collision;
-	GLboolean totalCollision;
-	
-
-	for (GameObject &obj : this->Platforms)
-	{
-		collision = CheckCollision(*Player, obj);
-		if (std::get<0>(collision)) {
-			break;
-		}
-	}
-
-	totalCollision = std::get<0>(collision);
-	GLboolean collisionX = std::get<1>(collision);
-	GLboolean collisionY = std::get<2>(collision);
-	vec2 difference = std::get<3>(collision);
-	Direction direction = std::get<4>(collision);
-
-
-
-
-	if (totalCollision) {
-		switch (direction) {
-		case LEFT:
-			Player->Velocity.x = 0.0f;
-			Player->Position.x -= Player->HalfExtent.x - difference.x;
-			break;
-		case RIGHT:
-			Player->Velocity.x = 0.0f;
-			Player->Position.x += Player->HalfExtent.x + difference.x;
-			break;
-		case UP:
-			Player->Velocity.y = 0.0f;
-			Player->Position.y -= Player->HalfExtent.y - difference.y;
-			break;
-		case DOWN:
-			Player->Velocity.y = 0.0f;
-			Player->Position.y += Player->HalfExtent.y + difference.y;
-			break;
-
-
-
-		}
-	}
-	
-
+	plats->Collisions(*Player);
 }

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\game.h" />
+    <ClInclude Include="Headers\platform_loader.h" />
     <ClInclude Include="Headers\game_object.h" />
     <ClInclude Include="Headers\resource_manager.h" />
     <ClInclude Include="Headers\shader.h" />
@@ -30,6 +31,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_object.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="platform_loader.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sprite_renderer.cpp" />

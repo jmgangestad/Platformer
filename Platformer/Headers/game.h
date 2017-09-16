@@ -7,6 +7,7 @@
 #include <glfw3.h>
 #include <glm/glm.hpp>
 #include "game_object.h"
+#include "platform_loader.h"
 
 enum GameState {
 	GAME_ACTIVE,
@@ -28,10 +29,9 @@ public:
 	GameState State;
 	GLboolean Keys[1024];
 	GLuint Width, Height;
-	GLint Level;
 	bool last_button_a = false;
 	bool last_button_y = false;
-	std::vector<GameObject> Platforms;
+	//std::vector<GameObject> Platforms;
 
 	Game(GLuint width, GLuint height);
 	~Game();
