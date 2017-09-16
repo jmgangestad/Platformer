@@ -17,49 +17,10 @@ GameObject *Player;
 GameObject *Platform;
 
 
-typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2> Collision;
+
 
 ISoundEngine *SoundEngine = createIrrKlangDevice();
 
-/*
-Direction VectorDirection(glm::vec2 target) {
-	glm::vec2 compass[] = {
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, -1.0f),
-		glm::vec2(-1.0f, 0.0f)
-	};
-
-	GLfloat max = 0.0f;
-	GLuint best_match = -1;
-	for (GLuint i = 0; i < 4; i++) {
-		GLfloat dot_product = glm::dot(glm::normalize(target), compass[i]);
-		if (dot_product > max) {
-			max = dot_product;
-			best_match = i;
-		}
-	}
-	return (Direction)best_match;
-}
-*/
-
-
-Collision CheckCollision(GameObject &one, GameObject &two) {
-	bool collisionX = one.Position.x + one.Size.x >= two.Position.x && two.Position.x + two.Size.x >= one.Position.x;
-	bool collisionY = one.Position.y + one.Size.y >= two.Position.y && two.Position.y + two.Size.y >= one.Position.y;
-
-	bool totalCollision = collisionX && collisionY;
-	
-	vec2 difference = vec2(0,0);
-
-	if (totalCollision)
-	{
-		difference.y = one.Position.y + one.Size.y - two.Position.y;
-	}
-
-
-	return std::make_tuple(totalCollision, collisionX, collisionY, difference);
-}
 
 
 enum {
@@ -123,7 +84,7 @@ void Game::Init() {
 	*/
 
 	
-	SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
+	// SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
 }
 
 void Game::Update(GLfloat dt) {
@@ -233,6 +194,68 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 }
 
 
+typedef std::tuple<GLboolean, GLboolean, GLboolean, vec2> Collision;
+
+
+Direction VectorDirection(glm::vec2 target) {
+	glm::vec2 compass[] = {
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, -1.0f),
+		glm::vec2(-1.0f, 0.0f)
+	};
+
+	GLfloat max = 0.0f;
+	GLuint best_match = -1;
+	for (GLuint i = 0; i < 4; i++) {
+		GLfloat dot_product = glm::dot(glm::normalize(target), compass[i]);
+		if (dot_product > max) {
+			max = dot_product;
+			best_match = i;
+		}
+	}
+
+	return (Direction)best_match;
+}
+
+
+
+Collision CheckCollision(GameObject &character, GameObject &two) {
+	Direction direction;
+	vec2 offset = vec2(0,0);
+	
+	bool collisionX = character.Position.x + character.Size.x >= two.Position.x && two.Position.x + two.Size.x >= character.Position.x;
+	bool collisionY = character.Position.y + character.Size.y >= two.Position.y && two.Position.y + two.Size.y >= character.Position.y;
+
+	bool totalCollision = collisionX && collisionY;
+	
+	vec2 center(character.Position.x + character.Size.x / 2.0f, character.Position.y + character.Size.y / 2.0f);
+	vec2 aabb_half_extents(two.Size.x / 2, two.Size.y / 2);
+	vec2 aabb_center(two.Position.x + aabb_half_extents.x, two.Position.y + aabb_half_extents.y);
+
+	vec2 difference = center - aabb_center;
+	vec2 clamped = clamp(difference, -aabb_half_extents, aabb_half_extents);
+
+	vec2 closest = aabb_center + clamped;
+
+	difference = closest - center;
+
+	direction = VectorDirection(difference);
+
+
+
+	/*
+	if (totalCollision)
+	{
+		difference.y = character.Position.y + character.Size.y - two.Position.y;
+	}
+	*/
+
+	return std::make_tuple(totalCollision, collisionX, collisionY, difference);
+}
+
+
+
 void Game::DoCollisions() {
 	// Collision checks go here
 
@@ -241,6 +264,7 @@ void Game::DoCollisions() {
 	if (std::get<0>(collision) && std::get<1>(collision))
 	{
 		Player->Velocity.x = 0.0f;
+		Player->Position.x -= std::get<3>(collision).x;
 	}
 
 	if (std::get<0>(collision) && std::get<2>(collision))
