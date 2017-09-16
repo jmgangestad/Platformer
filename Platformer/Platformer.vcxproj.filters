@@ -19,6 +19,9 @@
     <Filter Include="Resource Files\textures">
       <UniqueIdentifier>{f00162f8-2ff3-4684-9dcc-f6be454d0e0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\levels">
+      <UniqueIdentifier>{167b6ac4-5b0b-497d-989f-f77355b58b5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\game.h">
@@ -100,6 +103,18 @@
     </None>
     <None Include="Data\shaders\sprite.vs">
       <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="Data\levels\four.lvl">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="Data\levels\one.lvl">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="Data\levels\three.lvl">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="Data\levels\two.lvl">
+      <Filter>Resource Files\levels</Filter>
     </None>
   </ItemGroup>
 </Project>

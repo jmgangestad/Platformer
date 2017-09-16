@@ -2,14 +2,14 @@
 
 
 GameObject::GameObject()
-	:Position(0, 0), Size(1, 1), Velocity(0.0f), Rotation(0.0f), Sprite(), IsSolid(false), Destroyed(false), AngularRate(0.0f)
+	:Position(0, 0), Size(1, 1), Velocity(0.0f), Rotation(0.0f), Sprite(), IsSolid(false), Destroyed(false), AngularRate(0.0f), Gravity(1.0f), HasGravity(false)
 {
 	this->HalfExtent = this->Size / 2.0f;
 	this->Center = this->Position + this->HalfExtent;
 }
 
 GameObject::GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity)
-	: Position(pos), Size(size), Velocity(velocity), Rotation(0.0f), Sprite(sprite), IsSolid(false), Destroyed(false), AngularRate(0.0f)
+	: Position(pos), Size(size), Velocity(velocity), Rotation(0.0f), Sprite(sprite), IsSolid(false), Destroyed(false), AngularRate(0.0f), Gravity(1.0f), HasGravity(false)
 {
 	this->HalfExtent = this->Size / 2.0f;
 	this->Center = this->Position + this->HalfExtent;

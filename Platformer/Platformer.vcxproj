@@ -47,6 +47,10 @@
     <Image Include="Data\Resources\textures\ship.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\levels\four.lvl" />
+    <None Include="Data\levels\one.lvl" />
+    <None Include="Data\levels\three.lvl" />
+    <None Include="Data\levels\two.lvl" />
     <None Include="Data\shaders\particle.frag" />
     <None Include="Data\shaders\particle.vs" />
     <None Include="Data\shaders\sprite.frag" />

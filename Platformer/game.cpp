@@ -21,7 +21,7 @@ using namespace glm;
 
 SpriteRenderer *Renderer;
 GameObject *Player;
-GameObject *Platform;
+
 
 
 
@@ -75,11 +75,25 @@ void Game::Init() {
 	Player->Gravity = 700.0f;
 	
 
-	vec2 platformSize = vec2(this->Width/2, 10);
-	vec2 platformPos = vec2(this->Width / 2 - platformSize.x / 2, 3*this->Height / 4 - platformSize.y/2);
-	Platform = new GameObject(platformPos, platformSize, ResourceManager::GetTexture("platform"));
-	Platform->HasGravity = false;
-	Platform->Gravity = 1.0f;
+
+	//GameObject::GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity)
+
+	vec2 platformSize = vec2(this->Width / 2, 10);
+	vec2 platformPos = vec2(this->Width / 2 - platformSize.x / 2, 3 * this->Height / 4 - platformSize.y / 2);
+	GameObject obj(platformPos, platformSize, ResourceManager::GetTexture("platform"));
+	this->Platforms.push_back(obj);
+
+	platformSize = vec2(this->Width / 4, 15);
+	platformPos = vec2(500, 365);
+	GameObject obj2(platformPos, platformSize, ResourceManager::GetTexture("platform"));
+	this->Platforms.push_back(obj2);
+
+	platformSize = vec2(this->Width / 4, 15);
+	platformPos = vec2(200, 300);
+	GameObject obj3(platformPos, platformSize, ResourceManager::GetTexture("platform"));
+	this->Platforms.push_back(obj3);
+		
+
 
 	/* Many GameObjects example
 	for (int i = 0; i < num_asteroids; i++)
@@ -97,14 +111,13 @@ void Game::Init() {
 void Game::Update(GLfloat dt) {
 
 	Player->Move(dt, this->Width, this->Height);
-	Platform->Move(dt, this->Width, this->Height);
-
-	/* Many GameObjects example
-	for (AsteroidObject &tile : this->Asteroids)
+	
+	
+	for (GameObject &obj : this->Platforms)
 	{
-		tile.Move(dt, this->Width, this->Height);
+		obj.Move(dt, this->Width, this->Height);
 	}
-	*/
+	
 	
 
 	this->DoCollisions();
@@ -116,13 +129,13 @@ void Game::Render() {
 		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), vec2(this->Width, this->Height), 0.0f);
 		
 		Player->Draw(*Renderer, this->Width, this->Height);
-		Platform->Draw(*Renderer, this->Width, this->Height);
-		/* Many GameObjects example
-		for (AsteroidObject &item : this->Asteroids)
+		
+		
+		for (GameObject &obj : this->Platforms)
 		{
-			item.Draw(*Renderer, this->Width, this->Height);
+			obj.Draw(*Renderer, this->Width, this->Height);
 		}
-		*/
+		
 	}
 }
 
@@ -272,7 +285,7 @@ Collision CheckCollision(GameObject &character, GameObject &two) {
 	
 	offset = character.HalfExtent - difference;
 
-	std::cout << character.HalfExtent.x - difference.x << std::endl;
+	std::cout << character.Position.x << "  " << character.Position.y << std::endl;
 	
 
 
@@ -283,14 +296,24 @@ Collision CheckCollision(GameObject &character, GameObject &two) {
 
 void Game::DoCollisions() {
 	// Collision checks go here
+	Collision collision;
+	GLboolean totalCollision;
+	
 
-	Collision collision = CheckCollision(*Player, *Platform);
+	for (GameObject &obj : this->Platforms)
+	{
+		collision = CheckCollision(*Player, obj);
+		if (std::get<0>(collision)) {
+			break;
+		}
+	}
 
-	GLboolean totalCollision = std::get<0>(collision);
+	totalCollision = std::get<0>(collision);
 	GLboolean collisionX = std::get<1>(collision);
 	GLboolean collisionY = std::get<2>(collision);
 	vec2 difference = std::get<3>(collision);
 	Direction direction = std::get<4>(collision);
+
 
 
 
