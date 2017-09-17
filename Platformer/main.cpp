@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	VideoGame.Init();
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
 		VideoGame.Update(deltaTime);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		VideoGame.Render();
 
 		glfwSwapBuffers(window);

@@ -12,8 +12,10 @@ enum Direction {
 };
 
 void PlatformSet::Load(const GLchar *file) {
-	float PosX, PosY, SizeX, SizeY;
+	float PosX, PosY, SizeX, SizeY, depth;
 	string line;
+	string name;
+	bool IsSolid;
 
 	this->Plats.clear();
 			
@@ -26,11 +28,15 @@ void PlatformSet::Load(const GLchar *file) {
 
 			sstream >> PosX;
 			sstream >> PosY;
+			sstream >> depth;
 			sstream >> SizeX;
 			sstream >> SizeY;
+			sstream >> name;
+			sstream >> IsSolid;
 			
-			GameObject obj(glm::vec2(PosX,PosY), glm::vec2(SizeX,SizeY), ResourceManager::GetTexture("platform"));
-			
+			GameObject obj(glm::vec2(PosX,PosY), depth, glm::vec2(SizeX,SizeY), ResourceManager::GetTexture(name));
+			obj.IsSolid = IsSolid;
+
 			this->Plats.push_back(obj);
 		}
 	}
@@ -104,32 +110,35 @@ void PlatformSet::Collisions(GameObject &player)
 
 	for (GameObject &obj : this->Plats)
 	{
-		collision = CheckCollision(player, obj);
-		if (std::get<0>(collision)) {
+		if(obj.IsSolid)
+		{
+			collision = CheckCollision(player, obj);
+			if (std::get<0>(collision)) {
 
-			difference = std::get<1>(collision);
-			direction = std::get<2>(collision);
+				difference = std::get<1>(collision);
+				direction = std::get<2>(collision);
 
-			switch (direction) {
-			case LEFT:
-				player.Velocity.x = 0.0f;
-				player.Position.x -= player.HalfExtent.x - difference.x;
-				break;
-			case RIGHT:
-				player.Velocity.x = 0.0f;
-				player.Position.x += player.HalfExtent.x + difference.x;
-				break;
-			case UP:
-				player.Velocity.y = 0.0f;
-				player.Position.y -= player.HalfExtent.y - difference.y;
-				break;
-			case DOWN:
-				player.Velocity.y = 0.0f;
-				player.Position.y += player.HalfExtent.y + difference.y;
+				switch (direction) {
+				case LEFT:
+					player.Velocity.x = 0.0f;
+					player.Position.x -= player.HalfExtent.x - difference.x;
+					break;
+				case RIGHT:
+					player.Velocity.x = 0.0f;
+					player.Position.x += player.HalfExtent.x + difference.x;
+					break;
+				case UP:
+					player.Velocity.y = 0.0f;
+					player.Position.y -= player.HalfExtent.y - difference.y;
+					break;
+				case DOWN:
+					player.Velocity.y = 0.0f;
+					player.Position.y += player.HalfExtent.y + difference.y;
+					break;
+				}
+
 				break;
 			}
-
-			break;
 		}
 	}
 }

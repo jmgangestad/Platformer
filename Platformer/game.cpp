@@ -64,13 +64,18 @@ void Game::Init() {
 	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
 	ResourceManager::LoadTexture("Data/Resources/textures/goku.png", GL_TRUE, "player");
 	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "platform");
+	ResourceManager::LoadTexture("Data/Resources/textures/bush_1.png", GL_TRUE, "bush_1");
+	ResourceManager::LoadTexture("Data/Resources/textures/bush_2.png", GL_TRUE, "bush_2");
+	ResourceManager::LoadTexture("Data/Resources/textures/fruit_vine.png", GL_TRUE, "fruit_vine");
+	ResourceManager::LoadTexture("Data/Resources/textures/vines.png", GL_TRUE, "vines");
+
 	/* TEXTURES GO HERE */
 
 
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 	
 	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
-	Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("player"));
+	Player = new GameObject(playerPos, 0.0f, PLAYER_SIZE, ResourceManager::GetTexture("player"));
 	Player->HasGravity = true;
 	Player->Gravity = 700.0f;
 
@@ -87,7 +92,7 @@ void Game::Init() {
 	plats->Load("Data/levels/one.lvl");
 
 	
-	// SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
+	SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
 }
 
 void Game::Update(GLfloat dt) {
@@ -100,15 +105,12 @@ void Game::Update(GLfloat dt) {
 void Game::Render() {
 	if (this->State == GAME_ACTIVE) {
 
-		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), vec2(this->Width, this->Height), 0.0f);
+		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), -0.9f, vec2(this->Width, this->Height), 0.0f);
 		
 		Player->Draw(*Renderer, this->Width, this->Height);
 		
 	
 		plats->Draw(*Renderer, this->Width, this->Height);
-
-
-
 	}
 }
 
@@ -161,7 +163,7 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		}
 
 		if (axes[left_joy_x] != 0) {
-			Player->Position.x += 2.0f*axes[left_joy_x];
+			Player->Position.x += 1.5f*axes[left_joy_x];
 		}
 		
 		if (axes[left_joy_y] != 0) {

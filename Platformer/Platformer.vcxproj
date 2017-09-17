@@ -44,12 +44,6 @@
     <Media Include="Data\Resources\audio\plink.wav" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Data\Resources\textures\background.jpg" />
-    <Image Include="Data\Resources\textures\block.png" />
-    <Image Include="Data\Resources\textures\goku.png" />
-    <Image Include="Data\Resources\textures\ship.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Data\levels\four.lvl" />
     <None Include="Data\levels\one.lvl" />
     <None Include="Data\levels\three.lvl" />
@@ -58,6 +52,16 @@
     <None Include="Data\shaders\particle.vs" />
     <None Include="Data\shaders\sprite.frag" />
     <None Include="Data\shaders\sprite.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Resources\textures\background.jpg" />
+    <Image Include="Data\Resources\textures\block.png" />
+    <Image Include="Data\Resources\textures\bush_1.png" />
+    <Image Include="Data\Resources\textures\bush_2.png" />
+    <Image Include="Data\Resources\textures\fruit_vine.png" />
+    <Image Include="Data\Resources\textures\goku.png" />
+    <Image Include="Data\Resources\textures\ship.png" />
+    <Image Include="Data\Resources\textures\vines.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{62cbc93e-aabd-4e73-b6ca-3cd63cb347d1}</ProjectGuid>

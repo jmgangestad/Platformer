@@ -87,20 +87,6 @@
     </Media>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Data\Resources\textures\background.jpg">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="Data\Resources\textures\block.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="Data\Resources\textures\ship.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="Data\Resources\textures\goku.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Data\shaders\particle.frag">
       <Filter>Resource Files\shaders</Filter>
     </None>
@@ -125,5 +111,31 @@
     <None Include="Data\levels\two.lvl">
       <Filter>Resource Files\levels</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Resources\textures\background.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\block.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\bush_1.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\bush_2.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\fruit_vine.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\goku.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\ship.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\vines.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
