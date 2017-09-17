@@ -62,7 +62,7 @@ void Game::Init() {
 	/* TEXTURES GO HERE */
     //      example  LoadTexture("Data/Resources/textures/image.jpg", USE_ALPHA, "name");
 	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
-	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "player");
+	ResourceManager::LoadTexture("Data/Resources/textures/goku.png", GL_TRUE, "player");
 	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "platform");
 	/* TEXTURES GO HERE */
 

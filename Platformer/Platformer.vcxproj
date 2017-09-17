@@ -46,6 +46,7 @@
   <ItemGroup>
     <Image Include="Data\Resources\textures\background.jpg" />
     <Image Include="Data\Resources\textures\block.png" />
+    <Image Include="Data\Resources\textures\goku.png" />
     <Image Include="Data\Resources\textures\ship.png" />
   </ItemGroup>
   <ItemGroup>

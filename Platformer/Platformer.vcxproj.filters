@@ -96,6 +96,9 @@
     <Image Include="Data\Resources\textures\ship.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+    <Image Include="Data\Resources\textures\goku.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\particle.frag">
