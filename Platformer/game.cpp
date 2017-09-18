@@ -77,6 +77,7 @@ void Game::Init() {
 	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
 	Player = new GameObject(playerPos, 0.0f, PLAYER_SIZE, ResourceManager::GetTexture("player"));
 	Player->HasGravity = true;
+	Player->CanJump = true;
 	Player->Gravity = 700.0f;
 
 
@@ -92,7 +93,7 @@ void Game::Init() {
 	plats->Load("Data/levels/one.lvl");
 
 	
-	SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
+	// SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
 }
 
 void Game::Update(GLfloat dt) {
@@ -131,13 +132,14 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		if (button[a] && !last_button_a)
 		{
 			// button pressed but not held
+			if (Player->CanJump)
+			{
+				Player->Velocity.y -= 300.0f;
+				Player->CanJump = false;
 
-			Player->Velocity.y -= 300.0f;
 
-
-
-			SoundEngine->play2D("Data/Resources/audio/bleep.wav", GL_FALSE);
-
+				SoundEngine->play2D("Data/Resources/audio/bleep.wav", GL_FALSE);
+			}
 			last_button_a = true;
 		}
 		else if (!button[a])
@@ -148,13 +150,13 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		if (button[y] && !last_button_y)
 		{
 			// button pressed but not held
-
+			
 			Player->HasGravity = !Player->HasGravity;
 			Player->Velocity = vec2(0.0f, 0.0f);
+				
 
-			
 			SoundEngine->play2D("Data/Resources/audio/plink.wav", GL_FALSE);
-
+			
 			last_button_y = true;
 		}
 		else if (!button[y])
@@ -162,8 +164,8 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 			last_button_y = false;
 		}
 
-		if (axes[left_joy_x] != 0) {
-			Player->Position.x += 1.5f*axes[left_joy_x];
+		if (abs(axes[left_joy_x]) > 0.5) {
+			Player->Position.x += 1.5f*sign(axes[left_joy_x]);
 		}
 		
 		if (axes[left_joy_y] != 0) {

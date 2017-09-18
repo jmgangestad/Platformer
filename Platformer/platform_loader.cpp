@@ -115,6 +115,8 @@ void PlatformSet::Collisions(GameObject &player)
 			collision = CheckCollision(player, obj);
 			if (std::get<0>(collision)) {
 
+				player.CanJump = true;
+
 				difference = std::get<1>(collision);
 				direction = std::get<2>(collision);
 
