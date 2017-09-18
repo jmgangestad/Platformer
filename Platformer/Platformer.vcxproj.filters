@@ -45,6 +45,9 @@
     <ClInclude Include="Headers\platform_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\sprite_sheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="platform_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite_sheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

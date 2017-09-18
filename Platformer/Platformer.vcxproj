@@ -25,6 +25,7 @@
     <ClInclude Include="Headers\resource_manager.h" />
     <ClInclude Include="Headers\shader.h" />
     <ClInclude Include="Headers\sprite_renderer.h" />
+    <ClInclude Include="Headers\sprite_sheet.h" />
     <ClInclude Include="Headers\texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +36,7 @@
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sprite_renderer.cpp" />
+    <ClCompile Include="sprite_sheet.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
