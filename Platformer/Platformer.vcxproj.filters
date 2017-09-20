@@ -137,5 +137,8 @@
     <Image Include="Data\Resources\textures\vines.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+    <Image Include="Data\Resources\textures\spritesheettest.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -68,18 +68,21 @@ void Game::Init() {
 	ResourceManager::LoadTexture("Data/Resources/textures/bush_2.png", GL_TRUE, "bush_2");
 	ResourceManager::LoadTexture("Data/Resources/textures/fruit_vine.png", GL_TRUE, "fruit_vine");
 	ResourceManager::LoadTexture("Data/Resources/textures/vines.png", GL_TRUE, "vines");
+	ResourceManager::LoadTexture("Data/Resources/textures/spritesheettest.png", GL_TRUE, "spritesheettest");
 
 	/* TEXTURES GO HERE */
 
 
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 	
+
+	
 	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
-	Player = new GameObject(playerPos, 0.0f, PLAYER_SIZE, ResourceManager::GetTexture("player"));
+	Player = new GameObject(playerPos, 0.0f, PLAYER_SIZE, ResourceManager::GetTexture("spritesheettest"));
 	Player->HasGravity = true;
 	Player->CanJump = true;
 	Player->Gravity = 700.0f;
-
+	
 
 	/* How to originally add a platform
 	vec2 platformSize = vec2(this->Width / 2, 10);
@@ -108,9 +111,9 @@ void Game::Render() {
 
 		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), -0.9f, vec2(this->Width, this->Height), 0.0f);
 		
-		Player->Draw(*Renderer, this->Width, this->Height);
+		//Player->Draw(*Renderer, this->Width, this->Height);
+		Renderer->DrawSpriteSheet(Player->Sprite, glm::vec2(Player->Position.x, Player->Position.y), Player->Depth, 6, Player->Size, Player->Rotation);
 		
-	
 		plats->Draw(*Renderer, this->Width, this->Height);
 	}
 }
