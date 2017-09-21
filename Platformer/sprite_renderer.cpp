@@ -23,6 +23,9 @@ void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, GLfloat 
 
 	this->shader.SetMatrix4("model", model);
 
+	this->shader.SetVector2f("spriteOffset", glm::vec2(0.0f, 0.0f));
+	this->shader.SetVector2f("spriteSize", glm::vec2(1.0f, 1.0f));
+
 	this->shader.SetVector3f("spriteColor", color);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -61,6 +64,27 @@ void SpriteRenderer::initRenderData() {
 
 void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLfloat depth, GLint framesPerRow, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
+	static int i = 0;
+	static int counter = 0;
+	float offsetX = 0.0f;
+
+	float sheetWidth = 1536.0f;
+	float sheetHeight = 256.0f;
+	framesPerRow = 6.0f;
+	float framesPerColumn = 1.0f;
+
+	float sizeX = 1.0f/framesPerRow;
+	float sizeY = 1.0f/framesPerColumn;
+
+	if (counter == 100000-1)
+	{
+		i = (i + 1) % 6;
+	}
+
+	counter = (counter + 1) % 100000;
+	
+	offsetX = sizeX * i;
+
 
 	this->shader.Use();
 	glm::mat4 model;
@@ -72,7 +96,12 @@ void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLf
 
 	model = glm::scale(model, glm::vec3(size, 1.0f));
 
+	
+
 	this->shader.SetMatrix4("model", model);
+
+	this->shader.SetVector2f("spriteOffset", glm::vec2(offsetX, 0.0f));
+	this->shader.SetVector2f("spriteSize", glm::vec2(sizeX, sizeY));
 
 	this->shader.SetVector3f("spriteColor", color);
 
@@ -82,5 +111,7 @@ void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLf
 	glBindVertexArray(this->quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+
+	i++;
 }
 
