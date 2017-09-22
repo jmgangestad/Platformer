@@ -1,5 +1,6 @@
 #include "Headers/sprite_renderer.h"
 
+
 SpriteRenderer::SpriteRenderer(Shader &shader) {
 	this->shader = shader;
 	this->initRenderData();
@@ -62,8 +63,9 @@ void SpriteRenderer::initRenderData() {
 	glBindVertexArray(0);
 }
 
-void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLfloat depth, GLint framesPerRow, glm::vec2 size, GLfloat rotate, glm::vec3 color)
+void SpriteRenderer::DrawSpriteSheet(int movestate, Texture2D &texture, glm::vec2 position, GLfloat depth, GLint framesPerRow, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
+	static int direction = 1;
 	static int i = 0;
 	static int counter = 0;
 	float offsetX = 0.0f;
@@ -76,15 +78,26 @@ void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLf
 	float sizeX = 1.0f/framesPerRow;
 	float sizeY = 1.0f/framesPerColumn;
 
-	if (counter == 100000-1)
+	if (movestate != 0)
 	{
-		i = (i + 1) % 6;
+		if (counter == 45)
+		{
+			i++;
+			if (i > 5)
+			{
+				i = 0;
+			}
+			counter = 0;
+		}
+		counter++;
+	}
+	else
+	{
+		i = 4;
 	}
 
-	counter = (counter + 1) % 100000;
-	
-	offsetX = sizeX * i;
 
+	offsetX = sizeX * i;
 
 	this->shader.Use();
 	glm::mat4 model;
@@ -100,8 +113,20 @@ void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLf
 
 	this->shader.SetMatrix4("model", model);
 
+	
+
+	if (movestate == -1)
+	{
+		direction = -1;
+	}
+	else if (movestate == 1)
+	{
+		direction = 1;
+	}
+
+
 	this->shader.SetVector2f("spriteOffset", glm::vec2(offsetX, 0.0f));
-	this->shader.SetVector2f("spriteSize", glm::vec2(sizeX, sizeY));
+	this->shader.SetVector2f("spriteSize", glm::vec2(direction*sizeX, sizeY));
 
 	this->shader.SetVector3f("spriteColor", color);
 
@@ -112,6 +137,6 @@ void SpriteRenderer::DrawSpriteSheet(Texture2D &texture, glm::vec2 position, GLf
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
-	i++;
+
 }
 

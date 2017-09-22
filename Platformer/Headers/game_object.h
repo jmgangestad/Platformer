@@ -9,6 +9,7 @@
 #include "sprite_renderer.h"
 
 
+
 class GameObject {
 public:
 	glm::vec2 Position, Size, Velocity, Center, HalfExtent;
@@ -20,6 +21,8 @@ public:
 	GLboolean HasGravity;
 	GLfloat Gravity;
 	GLboolean CanJump;
+
+	int MoveState;
 
 	Texture2D Sprite;
 

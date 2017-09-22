@@ -112,11 +112,12 @@ void Game::Render() {
 		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), -0.9f, vec2(this->Width, this->Height), 0.0f);
 		
 		//Player->Draw(*Renderer, this->Width, this->Height);
-		Renderer->DrawSpriteSheet(Player->Sprite, glm::vec2(Player->Position.x, Player->Position.y), Player->Depth, 6, Player->Size, Player->Rotation);
+		Renderer->DrawSpriteSheet(Player->MoveState, Player->Sprite, glm::vec2(Player->Position.x, Player->Position.y), Player->Depth, 6, Player->Size, Player->Rotation);
 		
 		plats->Draw(*Renderer, this->Width, this->Height);
 	}
 }
+
 
 void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 	int count;
@@ -168,8 +169,21 @@ void Game::ProcessInput(GLfloat dt, GLFWwindow *window) {
 		}
 
 		if (abs(axes[left_joy_x]) > 0.5) {
-			Player->Position.x += 1.5f*sign(axes[left_joy_x]);
+			Player->Position.x += 1.0f*sign(axes[left_joy_x]);
+			if (sign(axes[left_joy_x]) > 0.0)
+			{
+				Player->MoveState = 1;
+			}
+			else
+			{
+				Player->MoveState = -1;
+			}
 		}
+		else
+		{
+			Player->MoveState = 0;
+		}
+
 		
 		if (axes[left_joy_y] != 0) {
 			//Player->Position.y -= 2.0f*axes[left_joy_y];

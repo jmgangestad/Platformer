@@ -5,11 +5,15 @@
 #include "Headers/game.h"
 #include "Headers/resource_manager.h"
 
+#include <algorithm>
+
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 const GLuint SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 
 Game VideoGame(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 
 int main(int argc, char *argv[]) {
 
@@ -36,27 +40,34 @@ int main(int argc, char *argv[]) {
 
 	VideoGame.Init();
 
-	GLfloat deltaTime = 0.0f;
-	GLfloat lastFrame = 0.0f;
-
-
 	VideoGame.State = GAME_ACTIVE;
 
+	double dt = 1 / 60.0;
+	double currentTime = (GLfloat)glfwGetTime();
+	
 	while (!glfwWindowShouldClose(window))
 	{
-		GLfloat currentFrame = (GLfloat) glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+
+		double newTime = (GLfloat)glfwGetTime();
+		double frameTime = newTime - currentTime;
+		currentTime = newTime;
+
 		glfwPollEvents();
+		
+		while (frameTime > 0.0)
+		{
+			float deltaTime = std::min(frameTime, dt);
+			VideoGame.ProcessInput(deltaTime, window);
+			VideoGame.Update(deltaTime);
+			frameTime -= deltaTime;
+		}
 
-		VideoGame.ProcessInput(deltaTime, window);
-
-		VideoGame.Update(deltaTime);
-
+		
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		
 		VideoGame.Render();
-
+		
 		glfwSwapBuffers(window);
 	}
 

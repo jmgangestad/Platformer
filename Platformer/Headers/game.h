@@ -19,7 +19,7 @@ enum Direction {
 	UP, LEFT, DOWN, RIGHT
 };
 
-const glm::vec2 PLAYER_SIZE(30, 36);
+const glm::vec2 PLAYER_SIZE(45, 54);
 
 const GLfloat PLAYER_VELOCITY(500.0f);
 
