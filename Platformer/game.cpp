@@ -68,7 +68,7 @@ void Game::Init() {
 	ResourceManager::LoadTexture("Data/Resources/textures/bush_2.png", GL_TRUE, "bush_2");
 	ResourceManager::LoadTexture("Data/Resources/textures/fruit_vine.png", GL_TRUE, "fruit_vine");
 	ResourceManager::LoadTexture("Data/Resources/textures/vines.png", GL_TRUE, "vines");
-	ResourceManager::LoadTexture("Data/Resources/textures/spritesheettest.png", GL_TRUE, "spritesheettest");
+	ResourceManager::LoadTexture("Data/Resources/textures/spritesheettest2.png", GL_TRUE, "spritesheettest");
 
 	/* TEXTURES GO HERE */
 

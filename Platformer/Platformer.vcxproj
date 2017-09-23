@@ -60,8 +60,10 @@
     <Image Include="Data\Resources\textures\bush_2.png" />
     <Image Include="Data\Resources\textures\fruit_vine.png" />
     <Image Include="Data\Resources\textures\goku.png" />
+    <Image Include="Data\Resources\textures\samurairat.jpg" />
     <Image Include="Data\Resources\textures\ship.png" />
     <Image Include="Data\Resources\textures\spritesheettest.png" />
+    <Image Include="Data\Resources\textures\spritesheettest2.png" />
     <Image Include="Data\Resources\textures\vines.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

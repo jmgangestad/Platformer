@@ -140,5 +140,11 @@
     <Image Include="Data\Resources\textures\spritesheettest.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+    <Image Include="Data\Resources\textures\samurairat.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Data\Resources\textures\spritesheettest2.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

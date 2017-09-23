@@ -27,15 +27,12 @@ int main(int argc, char *argv[]) {
 	glfwMakeContextCurrent(window);
 
 	glewExperimental = GL_TRUE;
-	glewInit();
-	glGetError();
+	glewInit();	glGetError();
 
 	glfwSetKeyCallback(window, key_callback);
 
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);	glEnable(GL_BLEND);	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	VideoGame.Init();
@@ -47,7 +44,6 @@ int main(int argc, char *argv[]) {
 	
 	while (!glfwWindowShouldClose(window))
 	{
-
 		double newTime = (GLfloat)glfwGetTime();
 		double frameTime = newTime - currentTime;
 		currentTime = newTime;

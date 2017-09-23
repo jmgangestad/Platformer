@@ -69,21 +69,22 @@ void SpriteRenderer::DrawSpriteSheet(int movestate, Texture2D &texture, glm::vec
 	static int i = 0;
 	static int counter = 0;
 	float offsetX = 0.0f;
+	float offsetY = 0.0f;
 
-	float sheetWidth = 1536.0f;
-	float sheetHeight = 256.0f;
-	framesPerRow = 6.0f;
-	float framesPerColumn = 1.0f;
+	float sheetWidth = 900.0f;
+	float sheetHeight = 495.0f;
+	framesPerRow = 5.0f;
+	float framesPerColumn = 2.0f;
 
 	float sizeX = 1.0f/framesPerRow;
 	float sizeY = 1.0f/framesPerColumn;
 
 	if (movestate != 0)
 	{
-		if (counter == 45)
+		if (counter == 15)
 		{
 			i++;
-			if (i > 5)
+			if (i > framesPerRow-1)
 			{
 				i = 0;
 			}
@@ -98,6 +99,7 @@ void SpriteRenderer::DrawSpriteSheet(int movestate, Texture2D &texture, glm::vec
 
 
 	offsetX = sizeX * i;
+	offsetY = sizeY * 0;
 
 	this->shader.Use();
 	glm::mat4 model;
@@ -125,7 +127,7 @@ void SpriteRenderer::DrawSpriteSheet(int movestate, Texture2D &texture, glm::vec
 	}
 
 
-	this->shader.SetVector2f("spriteOffset", glm::vec2(offsetX, 0.0f));
+	this->shader.SetVector2f("spriteOffset", glm::vec2(offsetX, offsetY));
 	this->shader.SetVector2f("spriteSize", glm::vec2(direction*sizeX, sizeY));
 
 	this->shader.SetVector3f("spriteColor", color);
