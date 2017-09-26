@@ -1,0 +1,237 @@
+
+#include <tuple>
+#include <ctime>
+#include "Headers/game_level_builder.h"
+#include "../Platformer/Headers/resource_manager.h"
+#include "../Platformer/Headers/sprite_renderer.h"
+#include "../Platformer/Headers/game_object.h"
+#include "../Platformer/Headers/platform_loader.h"
+#include <cstdlib>
+#include <irrklang/irrKlang.h>
+#include <vector>
+
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+
+
+using namespace irrklang;
+using namespace glm;
+
+SpriteRenderer *Renderer;
+GameObject *Player;
+PlatformSet *plats;
+
+
+
+
+ISoundEngine *SoundEngine = createIrrKlangDevice();
+
+
+
+enum {
+	a, b, x, y, lb, rb, back, start, lclick, rclick, Dup, Dright, Ddown, Dleft
+};
+
+enum {
+	left_joy_x, left_joy_y, right_joy_x, right_joy_y, L_trigger, R_trigger
+};
+
+GameBuilder::GameBuilder(GLuint width, GLuint height)
+	: State(GAME_ACTIVE), Keys(), Width(width), Height(height){
+
+}
+
+GameBuilder::~GameBuilder() {
+	delete Renderer;
+	delete Player;
+	delete plats;
+}
+
+void GameBuilder::Init() {
+	/* ALWAYS LEAVE THESE */
+	srand(time(NULL));
+	ResourceManager::LoadShader("Data/shaders/sprite.vs", "Data/shaders/sprite.frag", 0, "sprite");
+	ResourceManager::LoadShader("Data/shaders/particle.vs", "Data/shaders/particle.frag", 0, "particle");
+	mat4 projection = ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
+	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
+	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+	/* ALWAYS LEAVE THESE */
+
+	/* TEXTURES GO HERE */
+    //      example  LoadTexture("Data/Resources/textures/image.jpg", USE_ALPHA, "name");
+	ResourceManager::LoadTexture("Data/Resources/textures/background.jpg", GL_FALSE, "background");
+	ResourceManager::LoadTexture("Data/Resources/textures/goku.png", GL_TRUE, "player");
+	ResourceManager::LoadTexture("Data/Resources/textures/block.png", GL_TRUE, "platform");
+	ResourceManager::LoadTexture("Data/Resources/textures/bush_1.png", GL_TRUE, "bush_1");
+	ResourceManager::LoadTexture("Data/Resources/textures/bush_2.png", GL_TRUE, "bush_2");
+	ResourceManager::LoadTexture("Data/Resources/textures/fruit_vine.png", GL_TRUE, "fruit_vine");
+	ResourceManager::LoadTexture("Data/Resources/textures/vines.png", GL_TRUE, "vines");
+	ResourceManager::LoadTexture("Data/Resources/textures/spritesheettest2.png", GL_TRUE, "spritesheettest");
+
+	/* TEXTURES GO HERE */
+
+
+	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+	
+
+	
+	vec2 playerPos = vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height/2 - PLAYER_SIZE.y);
+	Player = new GameObject(playerPos, 0.0f, PLAYER_SIZE, ResourceManager::GetTexture("spritesheettest"));
+	Player->HasGravity = true;
+	Player->CanJump = true;
+	Player->Gravity = 700.0f;
+	
+
+	/* How to originally add a platform
+	vec2 platformSize = vec2(this->Width / 2, 10);
+	vec2 platformPos = vec2(this->Width / 2 - platformSize.x / 2, 3 * this->Height / 4 - platformSize.y / 2);
+	GameObject obj(platformPos, platformSize, ResourceManager::GetTexture("platform"));
+	this->Platforms.push_back(obj);
+	*/
+
+	plats = new PlatformSet();
+
+	plats->Load("Data/levels/one.lvl");
+
+	
+	// SoundEngine->play2D("Data/Resources/audio/background.mp3", GL_TRUE);
+}
+
+void GameBuilder::Update(GLfloat dt) {
+
+	Player->Move(dt, this->Width, this->Height);
+
+	this->DoCollisions();
+}
+
+void GameBuilder::Render() {
+	if (this->State == GAME_ACTIVE) {
+
+		Renderer->DrawSprite(ResourceManager::GetTexture("background"), vec2(0, 0), -0.9f, vec2(this->Width, this->Height), 0.0f);
+		
+		//Player->Draw(*Renderer, this->Width, this->Height);
+		Renderer->DrawSpriteSheet(Player->MoveState, Player->Sprite, glm::vec2(Player->Position.x, Player->Position.y), Player->Depth, 6, Player->Size, Player->Rotation);
+		
+		plats->Draw(*Renderer, this->Width, this->Height);
+	}
+}
+
+
+void GameBuilder::ProcessInput(GLfloat dt, GLFWwindow *window) {
+	int count;
+
+
+	/* CONTROLLER INPUT BEGIN */
+	if (glfwJoystickPresent(GLFW_JOYSTICK_1))
+	{
+		const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+		const unsigned char *button = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+
+		if (button[back]) {
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+		if (button[a] && !last_button_a)
+		{
+			// button pressed but not held
+			if (Player->CanJump)
+			{
+				Player->Velocity.y -= 300.0f;
+				Player->CanJump = false;
+
+
+				SoundEngine->play2D("Data/Resources/audio/bleep.wav", GL_FALSE);
+			}
+			last_button_a = true;
+		}
+		else if (!button[a])
+		{
+			last_button_a = false;
+		}
+
+		if (button[y] && !last_button_y)
+		{
+			// button pressed but not held
+			
+			Player->HasGravity = !Player->HasGravity;
+			Player->Velocity = vec2(0.0f, 0.0f);
+				
+
+			SoundEngine->play2D("Data/Resources/audio/plink.wav", GL_FALSE);
+			
+			last_button_y = true;
+		}
+		else if (!button[y])
+		{
+			last_button_y = false;
+		}
+
+		if (abs(axes[left_joy_x]) > 0.5) {
+			Player->Position.x += 1.0f*sign(axes[left_joy_x]);
+			if (sign(axes[left_joy_x]) > 0.0)
+			{
+				Player->MoveState = 1;
+			}
+			else
+			{
+				Player->MoveState = -1;
+			}
+		}
+		else
+		{
+			Player->MoveState = 0;
+		}
+
+		
+		if (axes[left_joy_y] != 0) {
+			//Player->Position.y -= 2.0f*axes[left_joy_y];
+		}
+
+		float dpadspeed = 1.5f;
+
+		if (button[Dleft]) {
+			Player->Position.x -= dpadspeed;
+		}
+		if (button[Dright]) {
+			Player->Position.x += dpadspeed;
+		}
+
+		if (button[Dup]) {
+			Player->Position.y -= dpadspeed;
+		}
+
+		if (button[Ddown]) {
+			Player->Position.y += dpadspeed;
+		}
+	}
+	/* CONTROLLER INPUT END */
+
+	/* KEYBOARD INPUT BEGIN */
+	if (this->Keys[GLFW_KEY_A]) {
+		
+	}
+	if (this->Keys[GLFW_KEY_D]) {
+		
+	}
+
+	if (this->Keys[GLFW_KEY_W]) {
+		
+	}
+
+	if (this->Keys[GLFW_KEY_S]) {
+		
+	}
+	/* KEYBOARD INPUT END */
+}
+
+
+
+
+
+void GameBuilder::DoCollisions() {
+	// Collision checks go here
+	plats->Collisions(*Player);
+}
